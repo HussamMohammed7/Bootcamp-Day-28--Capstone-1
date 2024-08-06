@@ -101,7 +101,7 @@ public class UserController {
 //    }
 
     @PostMapping("/login")
-    public ResponseEntity login(String username, String password) {
+    public ResponseEntity login(@RequestParam String username, @RequestParam String password) {
         if (userService.login(username,password) == null){
             return ResponseEntity.status(HttpStatus.OK).body(
                     new ApiResponse("User not found or password incorrect")
@@ -110,6 +110,34 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 userService.login(username,password)
         );
+
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity resetPassword(@RequestParam String id, @RequestParam String password ,@RequestParam String confirmPassword) {
+
+       int response = userService.resetPassword(id, password, confirmPassword) ;
+       if (response == -1) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                   new ApiResponse("User not found ")
+           );
+       }
+       if (response == -2) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                   new ApiResponse("password and confirmPassword doesnt match ")
+           );
+       }
+       if (response == -4){
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                   new ApiResponse("Password length should be more then 8 ")
+           );
+       }
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ApiResponse("Password reset successfully")
+            );
+
+
+
 
     }
 
@@ -147,6 +175,9 @@ public class UserController {
         );
 
     }
+
+
+
 
     @GetMapping("/history/{userId}")
 

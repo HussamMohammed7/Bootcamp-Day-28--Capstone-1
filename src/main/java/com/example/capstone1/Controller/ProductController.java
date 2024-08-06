@@ -110,4 +110,31 @@ public class ProductController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsSortedByPriceDescending());
     }
+    @PutMapping("/discount-products")
+    public ResponseEntity getDiscountedProducts(
+            @RequestParam double price,
+            @RequestParam double discountPercentage) {
+
+        System.out.println(price);
+        if (productService.discountProductsOver(price, discountPercentage).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiResponse("No products found over the specified price")
+            );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.discountProductsOver(price, discountPercentage)
+        );
+    }
+
+    @DeleteMapping ("/delete/category")
+    public ResponseEntity deleteAllcategoryies(@RequestParam String categoryId){
+
+        String  delete = productService.deleteAllProductsCategory(categoryId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                        new ApiResponse(delete)
+                );
+
+    }
+
 }

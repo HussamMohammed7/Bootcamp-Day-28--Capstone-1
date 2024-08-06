@@ -88,6 +88,23 @@ public class UserService {
 
     }
 
+    public int resetPassword(String id, String password ,  String confirmPassword ) {
+        User user = getUserById(id);
+        if (user == null){
+            return -1;
+        }
+
+        if (confirmPassword.equals(password)) {
+            if (password.length() <7){
+                return -4;
+            }
+            user.setPassword(confirmPassword);
+            return 0 ;
+        }
+        return -2;
+
+    }
+
 //    public Boolean addToCart(String userId, String productId) {
 //        User user = getUserById(userId);
 //        if (user == null) {
@@ -102,7 +119,24 @@ public class UserService {
 //    }
 
 
+    public ArrayList<Product> recommendProducts(String userId) {
+        User user = getUserById(userId);
+        if (user == null) {
+            return null; // User not found
+        }
 
+        double userBalance = user.getBalance();
+        ArrayList<Product> allProducts = productService.getProducts();
+        ArrayList<Product> recommendedProducts = new ArrayList<>();
+
+        for (Product product : allProducts) {
+            if (product.getPrice() <= userBalance) {
+                recommendedProducts.add(product);
+            }
+        }
+
+        return recommendedProducts;
+    }
     public int buyProduct(String userId ,String productId ,String merchantId) {
 
         if (users.isEmpty()) {
@@ -249,6 +283,7 @@ public class UserService {
         LocalDate currentDate = LocalDate.now();
         if (user.getSubscribedDateFinish() == null || user.getSubscribedDateFinish().isBefore(currentDate)) {
             user.setSubscribedDateFinish(currentDate.plusMonths(1));
+
         } else {
             user.setSubscribedDateFinish(user.getSubscribedDateFinish().plusMonths(1));
         }

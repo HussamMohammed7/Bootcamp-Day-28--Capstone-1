@@ -108,4 +108,28 @@ public class ProductService {
         return null;
     }
 
+    public ArrayList<Product> discountProductsOver(double price, double discountPercentage) {
+        ArrayList<Product> discountedProducts = new ArrayList<>();
+
+        for (Product product : getProducts()) {
+            if (product.getPrice() >= price) {
+                double discountedPrice = product.getPrice() -(product.getPrice() * 1-( discountPercentage / 100));
+                product.setPrice(discountedPrice);
+                discountedProducts.add(product);
+            }
+        }
+        return discountedProducts;
+    }
+
+    public String deleteAllProductsCategory(String categoryId) {
+        ArrayList<Product> filteredProducts = new ArrayList<>(products);
+        for (Product product : filteredProducts) {
+            if (product.getCategoryID().equals(categoryId)) {
+                products.remove(product);
+            }
+
+        }
+        return "category deleted";
+    }
+
 }
